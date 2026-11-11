@@ -220,3 +220,34 @@ def test_successful_inspect_and_original_download_audited(client):
     download=client.get(f'/api/cases/{cid}/evidence/{item["id"]}/download')
     assert download.status_code==200 and download.content==original
     assert client.store.ledger(cid)[-1]['action']=='evidence_exported'
+
+
+@pytest.mark.parametrize('mode',['valid','foreign_citation','malformed','offline'])
+def test_local_model_adapter_validation_and_audit(client, monkeypatch, mode):
+    import httpx
+    cid=new_case(client)
+    upload(client,cid,b'archive created','notes.txt','document')
+    event=client.store.all('events',cid)[0]
+    original_client=httpx.Client
+    def respond(request):
+        assert str(request.url)=='http://127.0.0.1:11434/api/chat'
+        payload=json.loads(request.content)
+        assert payload['stream'] is False and 'tools' not in payload
+        context=json.loads(payload['messages'][1]['content'])
+        assert [r['id'] for r in context['untrusted_evidence']]==[event['id']]
+        if mode=='offline':
+            raise httpx.ConnectError('Test runtime offline',request=request)
+        claim={'text':'An archive was created.','kind':'observation','citations':[event['id'] if mode=='valid' else 'FOREIGN-EVENT'],'quote':'archive created'}
+        content=json.dumps({'claims':[claim]}) if mode!='malformed' else '{bad JSON'
+        return httpx.Response(200,json={'message':{'content':content}})
+    monkeypatch.setenv('SUTRATRACE_MODEL','test-local-model')
+    monkeypatch.setattr(copilot.httpx,'Client',lambda **kwargs:original_client(transport=httpx.MockTransport(respond),**kwargs))
+    response=client.post(f'/api/cases/{cid}/ask',json={'question':'archive','use_model':True})
+    assert response.status_code==200
+    answer=response.json()
+    assert answer['mode']==('local_ai' if mode=='valid' else 'model_unavailable')
+    assert len(answer['claims'])==(1 if mode=='valid' else 0)
+    audit=client.store.ledger(cid)[-1]
+    assert audit['action']=='copilot_query'
+    assert audit['details']['model']=='test-local-model'
+    assert audit['details']['retrieved_ids']==[event['id']]
