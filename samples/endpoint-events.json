@@ -1,0 +1,26 @@
+[
+  {
+    "actor": "a.sharma",
+    "device": "WS-07",
+    "timestamp": "2026-10-16T21:08:00+05:30",
+    "event_type": "file_access",
+    "description": "Project Orion directory accessed",
+    "object": "D:/Projects/Orion"
+  },
+  {
+    "actor": "a.sharma",
+    "device": "WS-07",
+    "timestamp": "2026-10-16T21:12:00+05:30",
+    "event_type": "archive_created",
+    "description": "Project-Orion.zip created on workstation",
+    "object": "D:/Exports/Project-Orion.zip"
+  },
+  {
+    "actor": "a.sharma",
+    "device": "WS-07",
+    "timestamp": "2026-10-16T21:24:00+05:30",
+    "event_type": "file_deleted",
+    "description": "Local archive deleted after outbound activity",
+    "object": "D:/Exports/Project-Orion.zip"
+  }
+]

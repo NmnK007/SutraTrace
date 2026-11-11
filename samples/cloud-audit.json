@@ -1,0 +1,11 @@
+[
+  {
+    "actor": "a.sharma",
+    "device": "WS-07",
+    "timestamp": "2026-10-16T21:09:00+05:30",
+    "event_type": "file_download",
+    "description": "Project files downloaded from shared workspace",
+    "object": "Project Orion",
+    "destination": "workspace.example"
+  }
+]

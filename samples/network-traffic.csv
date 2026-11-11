@@ -1,0 +1,3 @@
+actor,device,timestamp,event_type,description,destination,bytes,ip,object
+a.sharma,WS-07,2026-10-16T08:40:00+05:30,transfer,Routine approved backup,backup.example,1048576,,
+a.sharma,WS-07,2026-10-16T21:19:00+05:30,transfer,Outbound transfer recorded to file-sharing destination,fileshare.example,487587840,198.51.100.42,D:/Exports/Project-Orion.zip

@@ -1,0 +1,10 @@
+[
+  {
+    "actor": "a.sharma",
+    "device": "WS-07",
+    "timestamp": "2026-10-16T21:15:00+05:30",
+    "event_type": "browser_visit",
+    "description": "File-sharing upload page visited",
+    "destination": "fileshare.example"
+  }
+]
